@@ -382,13 +382,10 @@ extern swig_intgo _wrap_wally_format_bitcoin_message_wallycore_982945dfd8db849f(
 extern swig_intgo _wrap_wally_ecdh_wallycore_982945dfd8db849f(swig_voidp arg1, swig_type_68 arg2, swig_voidp arg3, swig_type_69 arg4, swig_voidp arg5, swig_type_70 arg6);
 extern swig_intgo _wrap_wally_addr_segwit_from_bytes_wallycore_982945dfd8db849f(swig_voidp arg1, swig_type_71 arg2, swig_type_72 arg3, uintptr_t arg4, swig_voidp arg5);
 extern swig_intgo _wrap_wally_addr_segwit_to_bytes_wallycore_982945dfd8db849f(swig_type_73 arg1, swig_type_74 arg2, uintptr_t arg3, swig_voidp arg4, swig_type_75 arg5, swig_voidp arg6);
-extern swig_intgo _wrap_wally_address_to_scriptpubkey_wallycore_982945dfd8db849f(swig_type_76 arg1, uintptr_t arg2, swig_voidp arg3, swig_type_77 arg4, swig_voidp arg5);
 extern swig_intgo _wrap_wally_wif_from_bytes_wallycore_982945dfd8db849f(swig_voidp arg1, swig_type_78 arg2, uintptr_t arg3, uintptr_t arg4, swig_voidp arg5);
 extern swig_intgo _wrap_wally_wif_to_bytes_wallycore_982945dfd8db849f(swig_type_79 arg1, uintptr_t arg2, uintptr_t arg3, swig_voidp arg4, swig_type_80 arg5);
 extern swig_intgo _wrap_wally_wif_is_uncompressed_wallycore_982945dfd8db849f(swig_type_81 arg1, swig_voidp arg2);
 extern swig_intgo _wrap_wally_wif_to_public_key_wallycore_982945dfd8db849f(swig_type_82 arg1, uintptr_t arg2, swig_voidp arg3, swig_type_83 arg4, swig_voidp arg5);
-extern swig_intgo _wrap_wally_bip32_key_to_address_wallycore_982945dfd8db849f(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, swig_voidp arg4);
-extern swig_intgo _wrap_wally_bip32_key_to_addr_segwit_wallycore_982945dfd8db849f(uintptr_t arg1, swig_type_84 arg2, uintptr_t arg3, swig_voidp arg4);
 extern swig_intgo _wrap_wally_wif_to_address_wallycore_982945dfd8db849f(swig_type_85 arg1, uintptr_t arg2, uintptr_t arg3, swig_voidp arg4);
 extern swig_intgo _wrap_wally_confidential_addr_to_addr_wallycore_982945dfd8db849f(swig_type_86 arg1, uintptr_t arg2, swig_voidp arg3);
 extern swig_intgo _wrap_wally_confidential_addr_to_ec_public_key_wallycore_982945dfd8db849f(swig_type_87 arg1, uintptr_t arg2, swig_voidp arg3, swig_type_88 arg4);
@@ -1101,20 +1098,6 @@ func Wally_addr_segwit_to_bytes(arg1 string, arg2 string, arg3 Uint32_t, arg4 *b
 	return swig_r
 }
 
-func Wally_address_to_scriptpubkey(arg1 string, arg2 Uint32_t, arg3 *byte, arg4 int64, arg5 *int64) (_swig_ret int) {
-	var swig_r int
-	_swig_i_0 := arg1
-	_swig_i_1 := arg2.Swigcptr()
-	_swig_i_2 := arg3
-	_swig_i_3 := arg4
-	_swig_i_4 := arg5
-	swig_r = (int)(C._wrap_wally_address_to_scriptpubkey_wallycore_982945dfd8db849f(*(*C.swig_type_76)(unsafe.Pointer(&_swig_i_0)), C.uintptr_t(_swig_i_1), C.swig_voidp(_swig_i_2), C.swig_type_77(_swig_i_3), C.swig_voidp(_swig_i_4)))
-	if Swig_escape_always_false {
-		Swig_escape_val = arg1
-	}
-	return swig_r
-}
-
 func Wally_wif_from_bytes(arg1 *byte, arg2 int64, arg3 Uint32_t, arg4 Uint32_t, arg5 *string) (_swig_ret int) {
 	var swig_r int
 	_swig_i_0 := arg1
@@ -1161,29 +1144,6 @@ func Wally_wif_to_public_key(arg1 string, arg2 Uint32_t, arg3 *byte, arg4 int64,
 	swig_r = (int)(C._wrap_wally_wif_to_public_key_wallycore_982945dfd8db849f(*(*C.swig_type_82)(unsafe.Pointer(&_swig_i_0)), C.uintptr_t(_swig_i_1), C.swig_voidp(_swig_i_2), C.swig_type_83(_swig_i_3), C.swig_voidp(_swig_i_4)))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg1
-	}
-	return swig_r
-}
-
-func Wally_bip32_key_to_address(arg1 Ext_key, arg2 Uint32_t, arg3 Uint32_t, arg4 *string) (_swig_ret int) {
-	var swig_r int
-	_swig_i_0 := arg1.Swigcptr()
-	_swig_i_1 := arg2.Swigcptr()
-	_swig_i_2 := arg3.Swigcptr()
-	_swig_i_3 := arg4
-	swig_r = (int)(C._wrap_wally_bip32_key_to_address_wallycore_982945dfd8db849f(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1), C.uintptr_t(_swig_i_2), C.swig_voidp(_swig_i_3)))
-	return swig_r
-}
-
-func Wally_bip32_key_to_addr_segwit(arg1 Ext_key, arg2 string, arg3 Uint32_t, arg4 *string) (_swig_ret int) {
-	var swig_r int
-	_swig_i_0 := arg1.Swigcptr()
-	_swig_i_1 := arg2
-	_swig_i_2 := arg3.Swigcptr()
-	_swig_i_3 := arg4
-	swig_r = (int)(C._wrap_wally_bip32_key_to_addr_segwit_wallycore_982945dfd8db849f(C.uintptr_t(_swig_i_0), *(*C.swig_type_84)(unsafe.Pointer(&_swig_i_1)), C.uintptr_t(_swig_i_2), C.swig_voidp(_swig_i_3)))
-	if Swig_escape_always_false {
-		Swig_escape_val = arg2
 	}
 	return swig_r
 }

@@ -1228,39 +1228,6 @@ intgo _wrap_wally_addr_segwit_to_bytes_wallycore_982945dfd8db849f(_gostring_ _sw
 }
 
 
-intgo _wrap_wally_address_to_scriptpubkey_wallycore_982945dfd8db849f(_gostring_ _swig_go_0, uint32_t *_swig_go_1, char *_swig_go_2, long long _swig_go_3, long long *_swig_go_4) {
-  char *arg1 = (char *) 0 ;
-  uint32_t arg2 ;
-  unsigned char *arg3 = (unsigned char *) 0 ;
-  size_t arg4 ;
-  size_t *arg5 = (size_t *) 0 ;
-  uint32_t *argp2 ;
-  int result;
-  intgo _swig_go_result;
-  
-  
-  arg1 = (char *)malloc(_swig_go_0.n + 1);
-  memcpy(arg1, _swig_go_0.p, _swig_go_0.n);
-  arg1[_swig_go_0.n] = '\0';
-  
-  
-  argp2 = (uint32_t *)_swig_go_1;
-  if (argp2 == NULL) {
-    _swig_gopanic("Attempt to dereference null uint32_t");
-  }
-  arg2 = (uint32_t)*argp2;
-  
-  arg3 = *(unsigned char **)&_swig_go_2; 
-  arg4 = (size_t)_swig_go_3; 
-  arg5 = *(size_t **)&_swig_go_4; 
-  
-  result = (int)wally_address_to_scriptpubkey((char const *)arg1,arg2,arg3,arg4,arg5);
-  _swig_go_result = result; 
-  free(arg1); 
-  return _swig_go_result;
-}
-
-
 intgo _wrap_wally_wif_from_bytes_wallycore_982945dfd8db849f(char *_swig_go_0, long long _swig_go_1, uint32_t *_swig_go_2, uint32_t *_swig_go_3, _gostring_* _swig_go_4) {
   unsigned char *arg1 = (unsigned char *) 0 ;
   size_t arg2 ;
@@ -1390,80 +1357,6 @@ intgo _wrap_wally_wif_to_public_key_wallycore_982945dfd8db849f(_gostring_ _swig_
   result = (int)wally_wif_to_public_key((char const *)arg1,arg2,arg3,arg4,arg5);
   _swig_go_result = result; 
   free(arg1); 
-  return _swig_go_result;
-}
-
-
-intgo _wrap_wally_bip32_key_to_address_wallycore_982945dfd8db849f(ext_key *_swig_go_0, uint32_t *_swig_go_1, uint32_t *_swig_go_2, _gostring_* _swig_go_3) {
-  ext_key *arg1 = (ext_key *) 0 ;
-  uint32_t arg2 ;
-  uint32_t arg3 ;
-  char **arg4 = (char **) 0 ;
-  uint32_t *argp2 ;
-  uint32_t *argp3 ;
-  int result;
-  intgo _swig_go_result;
-  
-  arg1 = *(ext_key **)&_swig_go_0; 
-  
-  argp2 = (uint32_t *)_swig_go_1;
-  if (argp2 == NULL) {
-    _swig_gopanic("Attempt to dereference null uint32_t");
-  }
-  arg2 = (uint32_t)*argp2;
-  
-  
-  argp3 = (uint32_t *)_swig_go_2;
-  if (argp3 == NULL) {
-    _swig_gopanic("Attempt to dereference null uint32_t");
-  }
-  arg3 = (uint32_t)*argp3;
-  
-  arg4 = *(char ***)&_swig_go_3; 
-  
-  result = (int)wally_bip32_key_to_address((ext_key const *)arg1,arg2,arg3,arg4);
-  _swig_go_result = result; 
-  {
-    if (arg4 && *arg4) {
-      _swig_go_3->n = strlen(*arg4);
-    }
-  }
-  return _swig_go_result;
-}
-
-
-intgo _wrap_wally_bip32_key_to_addr_segwit_wallycore_982945dfd8db849f(ext_key *_swig_go_0, _gostring_ _swig_go_1, uint32_t *_swig_go_2, _gostring_* _swig_go_3) {
-  ext_key *arg1 = (ext_key *) 0 ;
-  char *arg2 = (char *) 0 ;
-  uint32_t arg3 ;
-  char **arg4 = (char **) 0 ;
-  uint32_t *argp3 ;
-  int result;
-  intgo _swig_go_result;
-  
-  arg1 = *(ext_key **)&_swig_go_0; 
-  
-  arg2 = (char *)malloc(_swig_go_1.n + 1);
-  memcpy(arg2, _swig_go_1.p, _swig_go_1.n);
-  arg2[_swig_go_1.n] = '\0';
-  
-  
-  argp3 = (uint32_t *)_swig_go_2;
-  if (argp3 == NULL) {
-    _swig_gopanic("Attempt to dereference null uint32_t");
-  }
-  arg3 = (uint32_t)*argp3;
-  
-  arg4 = *(char ***)&_swig_go_3; 
-  
-  result = (int)wally_bip32_key_to_addr_segwit((ext_key const *)arg1,(char const *)arg2,arg3,arg4);
-  _swig_go_result = result; 
-  {
-    if (arg4 && *arg4) {
-      _swig_go_3->n = strlen(*arg4);
-    }
-  }
-  free(arg2); 
   return _swig_go_result;
 }
 
