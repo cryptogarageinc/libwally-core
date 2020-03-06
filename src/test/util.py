@@ -46,6 +46,15 @@ class ext_key(Structure):
                 ('pub_key', c_ubyte * 33),
                 ('pub_key_tweak_sum', c_ubyte * 32)]
 
+class wally_descriptor_address_item(Structure):
+    _fields_ = [('child_num', c_uint),
+                ('address', c_char_p),
+                ('address_len', c_ulong)]
+
+class wally_descriptor_addresses(Structure):
+    _fields_ = [('items',  POINTER(wally_descriptor_address_item)),
+                ('num_items', c_ulong)]
+
 # Sentinel classes for returning output parameters
 class c_char_p_p_class(object):
     pass
@@ -448,6 +457,10 @@ for f in (
     ('wally_witness_p2wpkh_from_der', c_int, [c_void_p, c_ulong, c_void_p, c_ulong, POINTER(POINTER(wally_tx_witness_stack))]),
     ('wally_witness_p2wpkh_from_sig', c_int, [c_void_p, c_ulong, c_void_p, c_ulong, c_uint, POINTER(POINTER(wally_tx_witness_stack))]),
     ('wally_witness_program_from_bytes', c_int, [c_void_p, c_ulong, c_uint, c_void_p, c_ulong, c_ulong_p]),
+    ('wally_descriptor_to_scriptpubkey', c_int, [c_char_p, c_void_p, c_void_p, c_ulong, c_uint, c_uint, c_uint, c_uint, c_uint, c_void_p, c_ulong, c_ulong_p]),
+    ('wally_descriptor_to_address', c_int, [c_char_p, c_void_p, c_void_p, c_ulong, c_uint, c_uint, c_uint, c_char_p_p]),
+    ('wally_descriptor_to_addresses', c_int, [c_char_p, c_void_p, c_void_p, c_ulong, c_uint, c_uint, c_uint, c_uint, POINTER(wally_descriptor_addresses)]),
+    ('wally_create_descriptor_checksum', c_int, [c_char_p, c_void_p, c_void_p, c_ulong, c_uint, c_char_p_p]),
     ):
 
     def bind_fn(name, res, args):
