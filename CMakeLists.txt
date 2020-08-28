@@ -292,6 +292,8 @@ set(ENABLE_MODULE_WHITELIST "1")
 set(ENABLE_MODULE_GENERATOR "1")
 set(ENABLE_MODULE_SCHNORRSIG "1")
 set(ENABLE_MODULE_MUSIG "1")
+set(ENABLE_MODULE_EXTRAKEYS "1")
+set(ENABLE_MODULE_ECDSA_ADAPTOR "1")
 
 check_cxx_source_compiles("int main() { __builtin_popcount(0); return 0;}"
   HAVE_BUILTIN_POPCOUNT)
@@ -1419,6 +1421,49 @@ add_test(
   COMMAND $<TARGET_FILE:${TEST_DESCRIPTOR_NAME}>
   WORKING_DIRECTORY ${WALLY_OBJ_BINARY_DIR}
 )
+
+####################
+# test for C(secp256k1)
+####################
+if(GMP_FOUND)
+set(TEST_SECP256K1_NAME ctest_secp256k1)
+add_executable(${TEST_SECP256K1_NAME} src/secp256k1/src/tests.c)
+target_compile_options(${TEST_SECP256K1_NAME}
+  PRIVATE
+    $<IF:$<C_COMPILER_ID:MSVC>,
+      /source-charset:utf-8 /wd4251,
+      -Wall -Wextra -Wno-unused-function
+      ${PROFILE_ARCS_OPT} ${TEST_COVERAGE_OPT}
+    >
+)
+target_compile_definitions(${TEST_SECP256K1_NAME}
+  PRIVATE
+    ${ELEMENTS_COMP_OPT}
+)
+target_include_directories(${TEST_SECP256K1_NAME}
+  PRIVATE
+    ${CONFIG_HEADER_DIRECTORY}
+    .
+    src/secp256k1
+    src/secp256k1/src
+    ${SECP256K_OUTPUT_PATH}
+)
+target_link_directories(${TEST_SECP256K1_NAME}  PRIVATE ./ )
+target_link_libraries(${TEST_SECP256K1_NAME}
+  PRIVATE $<$<BOOL:$<C_COMPILER_ID:MSVC>>:winmm.lib>
+  PRIVATE $<$<BOOL:$<C_COMPILER_ID:MSVC>>:ws2_32.lib>
+  PRIVATE $<IF:$<OR:$<PLATFORM_ID:Darwin>,$<PLATFORM_ID:Windows>>,,rt>
+  PRIVATE $<$<BOOL:$<C_COMPILER_ID:GCC>>:-static-libgcc>
+  PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:pthread>
+  PRIVATE
+    ${TEST_WALY_LIB}
+)
+add_test(
+  NAME ${TEST_SECP256K1_NAME}
+  COMMAND $<TARGET_FILE:${TEST_SECP256K1_NAME}>
+  WORKING_DIRECTORY ${WALLY_OBJ_BINARY_DIR}
+)
+endif(GMP_FOUND)
 
 ####################
 # test for C(Elements)
