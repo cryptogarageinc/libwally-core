@@ -58,7 +58,7 @@ endif()
 if(ENABLE_EXPORT_ALL)
 set(ENABLE_EXPORT_ALL_OPT -fvisibility=hidden)
 else()
-set(ENABLE_EXPORT_ALL_OPT "-fstack-check")
+set(ENABLE_EXPORT_ALL_OPT "")
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
