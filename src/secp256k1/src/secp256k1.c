@@ -651,7 +651,7 @@ int secp256k1_ec_seckey_tweak_add(const secp256k1_context* ctx, unsigned char *s
     return ret;
 }
 
-#if 0  /* ECDSA-adaptor */
+#if 1  /* ECDSA-adaptor */
 int secp256k1_ec_privkey_tweak_add(const secp256k1_context* ctx, unsigned char *seckey, const unsigned char *tweak) {
     return secp256k1_ec_seckey_tweak_add(ctx, seckey, tweak);
 }
@@ -686,7 +686,7 @@ static int secp256k1_ec_pubkey_tweak_add_helper(const secp256k1_ecmult_context* 
     secp256k1_scalar_set_b32(&term, tweak, &overflow);
     return !overflow && secp256k1_eckey_pubkey_tweak_add(ecmult_ctx, p, &term);
 }
-#if 0  /* ECDSA-adaptor */
+#if 1  /* ECDSA-adaptor */
 int secp256k1_ec_pubkey_tweak_add(const secp256k1_context* ctx, secp256k1_pubkey *pubkey, const unsigned char *tweak) {
     secp256k1_ge p;
     int ret = 0;
