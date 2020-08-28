@@ -345,14 +345,14 @@ int bip32_key_unserialize_alloc(const unsigned char *bytes, size_t bytes_len,
     return ret;
 }
 
-static int bip32_privkey_tweak_add(const secp256k1_context* ctx, unsigned char *seckey,
+static int bip32_privkey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey,
                                    size_t seckey_size, const unsigned char *tweak)
 {
-  if (mem_is_zero(seckey, seckey_size)) {
-    memcpy(seckey, tweak, seckey_size);
-    return WALLY_OK;
-  }
-  return !privkey_tweak_add(ctx, seckey, tweak);
+    if (mem_is_zero(seckey, seckey_size)) {
+        memcpy(seckey, tweak, seckey_size);
+        return WALLY_OK;
+    }
+    return !privkey_tweak_add(ctx, seckey, tweak);
 }
 
 /* BIP32: Child Key Derivations
@@ -822,7 +822,7 @@ int bip32_key_get_priv_key(const struct ext_key *hdkey, unsigned char *bytes_out
 
 #define GET_I(name) \
     int bip32_key_get_ ## name(const struct ext_key *hdkey, size_t *written) { \
-        if (written) *written = 0; \
+        if (written) * written = 0; \
         if (!hdkey || !written) return WALLY_EINVAL; \
         *written = hdkey->name; \
         return WALLY_OK; \
