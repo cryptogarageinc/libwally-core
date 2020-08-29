@@ -28,6 +28,7 @@ option(ENABLE_SWIG_PYTHON "enable the SWIG python interface (ON or OFF. default:
 option(ENABLE_SWIG_GO "enable the SWIG Go interface (ON or OFF. default:OFF)" OFF)
 option(GENERATE_WALLY "generate the wally.xxx library (ON or OFF. default:ON)" ON)
 option(ENABLE_EMSCRIPTEN "enable EMSCRIPTEN (ON or OFF. default:OFF)" OFF)
+option(ENABLE_SECP256K1_TEST "enable secp256k1 test (ON or OFF. default:OFF)" OFF)
 
 if(NOT EXCLUDE_GENERATE_WALLY)
 set(EXCLUDE_GENERATE_WALLY  FALSE)
@@ -1430,9 +1431,16 @@ add_test(
 ####################
 # test for C(secp256k1)
 ####################
-if(GMP_FOUND)
+if(ENABLE_SECP256K1_TEST AND ${ENABLE_SECP256K1_TEST})
 set(TEST_SECP256K1_NAME ctest_secp256k1)
-add_executable(${TEST_SECP256K1_NAME} src/secp256k1/src/tests.c)
+set(TEST_SECP256K1_FILES
+    src/secp256k1/src/tests.c
+    ${CONFIG_HEADER_DIRECTORY}/libsecp256k1-config.h
+    src/secp256k1/include/secp256k1.h
+    src/secp256k1/include/secp256k1_recovery.h
+    ${ECMULT_STATIC_CONTEXT_H}
+)
+add_executable(${TEST_SECP256K1_NAME} ${TEST_SECP256K1_FILES})
 target_compile_options(${TEST_SECP256K1_NAME}
   PRIVATE
     $<IF:$<C_COMPILER_ID:MSVC>,
@@ -1443,13 +1451,15 @@ target_compile_options(${TEST_SECP256K1_NAME}
 )
 target_compile_definitions(${TEST_SECP256K1_NAME}
   PRIVATE
-    ${ELEMENTS_COMP_OPT}
+    SECP256K1_BUILD
+    HAVE_CONFIG_H
 )
 target_include_directories(${TEST_SECP256K1_NAME}
   PRIVATE
     ${CONFIG_HEADER_DIRECTORY}
     .
     src/secp256k1
+    src/secp256k1/include
     src/secp256k1/src
     ${SECP256K_OUTPUT_PATH}
 )
@@ -1460,15 +1470,13 @@ target_link_libraries(${TEST_SECP256K1_NAME}
   PRIVATE $<IF:$<OR:$<PLATFORM_ID:Darwin>,$<PLATFORM_ID:Windows>>,,rt>
   PRIVATE $<$<BOOL:$<C_COMPILER_ID:GCC>>:-static-libgcc>
   PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:pthread>
-  PRIVATE
-    ${TEST_WALY_LIB}
 )
 add_test(
   NAME ${TEST_SECP256K1_NAME}
   COMMAND $<TARGET_FILE:${TEST_SECP256K1_NAME}>
   WORKING_DIRECTORY ${WALLY_OBJ_BINARY_DIR}
 )
-endif(GMP_FOUND)
+endif(ENABLE_SECP256K1_TEST AND ${ENABLE_SECP256K1_TEST})
 
 ####################
 # test for C(Elements)
