@@ -572,6 +572,7 @@ static int secp256k1_ec_pubkey_create_helper(const secp256k1_ecmult_gen_context 
     return ret;
 }
 
+#if 0  /* ECDSA-adaptor */
 int secp256k1_ec_pubkey_create(const secp256k1_context* ctx, secp256k1_pubkey *pubkey, const unsigned char *seckey) {
     secp256k1_ge p;
     secp256k1_scalar seckey_scalar;
@@ -589,6 +590,30 @@ int secp256k1_ec_pubkey_create(const secp256k1_context* ctx, secp256k1_pubkey *p
     secp256k1_scalar_clear(&seckey_scalar);
     return ret;
 }
+#else
+int secp256k1_ec_pubkey_create(const secp256k1_context* ctx, secp256k1_pubkey *pubkey, const unsigned char *seckey) {
+    secp256k1_gej pj;
+    secp256k1_ge p;
+    secp256k1_scalar sec;
+    int overflow;
+    int ret = 0;
+    VERIFY_CHECK(ctx != NULL);
+    ARG_CHECK(pubkey != NULL);
+    memset(pubkey, 0, sizeof(*pubkey));
+    ARG_CHECK(secp256k1_ecmult_gen_context_is_built(&ctx->ecmult_gen_ctx));
+    ARG_CHECK(seckey != NULL);
+
+    secp256k1_scalar_set_b32(&sec, seckey, &overflow);
+    ret = !overflow && !secp256k1_scalar_is_zero(&sec);
+    if (ret) {
+        secp256k1_ecmult_gen(&ctx->ecmult_gen_ctx, &pj, &sec);
+        secp256k1_ge_set_gej(&p, &pj);
+        secp256k1_pubkey_save(pubkey, &p);
+    }
+    secp256k1_scalar_clear(&sec);
+    return ret;
+}
+#endif
 
 int secp256k1_ec_seckey_negate(const secp256k1_context* ctx, unsigned char *seckey) {
     secp256k1_scalar sec;
@@ -605,9 +630,24 @@ int secp256k1_ec_seckey_negate(const secp256k1_context* ctx, unsigned char *seck
     return ret;
 }
 
+#if 0  /* ECDSA-adaptor */
 int secp256k1_ec_privkey_negate(const secp256k1_context* ctx, unsigned char *seckey) {
     return secp256k1_ec_seckey_negate(ctx, seckey);
 }
+#else
+int secp256k1_ec_privkey_negate(const secp256k1_context* ctx, unsigned char *seckey) {
+    secp256k1_scalar sec;
+    VERIFY_CHECK(ctx != NULL);
+    ARG_CHECK(seckey != NULL);
+
+    secp256k1_scalar_set_b32(&sec, seckey, NULL);
+    secp256k1_scalar_negate(&sec, &sec);
+    secp256k1_scalar_get_b32(seckey, &sec);
+
+    secp256k1_scalar_clear(&sec);
+    return 1;
+}
+#endif
 
 int secp256k1_ec_pubkey_negate(const secp256k1_context* ctx, secp256k1_pubkey *pubkey) {
     int ret = 0;
@@ -651,7 +691,7 @@ int secp256k1_ec_seckey_tweak_add(const secp256k1_context* ctx, unsigned char *s
     return ret;
 }
 
-#if 1  /* ECDSA-adaptor */
+#if 0  /* ECDSA-adaptor */
 int secp256k1_ec_privkey_tweak_add(const secp256k1_context* ctx, unsigned char *seckey, const unsigned char *tweak) {
     return secp256k1_ec_seckey_tweak_add(ctx, seckey, tweak);
 }
@@ -686,7 +726,8 @@ static int secp256k1_ec_pubkey_tweak_add_helper(const secp256k1_ecmult_context* 
     secp256k1_scalar_set_b32(&term, tweak, &overflow);
     return !overflow && secp256k1_eckey_pubkey_tweak_add(ecmult_ctx, p, &term);
 }
-#if 1  /* ECDSA-adaptor */
+
+#if 0  /* ECDSA-adaptor */
 int secp256k1_ec_pubkey_tweak_add(const secp256k1_context* ctx, secp256k1_pubkey *pubkey, const unsigned char *tweak) {
     secp256k1_ge p;
     int ret = 0;
@@ -750,7 +791,7 @@ int secp256k1_ec_seckey_tweak_mul(const secp256k1_context* ctx, unsigned char *s
     return ret;
 }
 
-#if 1  /* ECDSA-adaptor */
+#if 0  /* ECDSA-adaptor */
 int secp256k1_ec_privkey_tweak_mul(const secp256k1_context* ctx, unsigned char *seckey, const unsigned char *tweak) {
     return secp256k1_ec_seckey_tweak_mul(ctx, seckey, tweak);
 }
