@@ -512,7 +512,7 @@ static void secp256k1_schnorrsig_sha256_tagged(secp256k1_sha256 *sha) {
     sha->bytes = 64;
 }
 
-int secp256k1_schnorrsig_sign2(const secp256k1_context* ctx, unsigned char *sig64, const unsigned char *msg32, const secp256k1_keypair *keypair, secp256k1_nonce_function_hardened noncefp, void *ndata) {
+int secp256k1_schnorrsig_xonly_sign(const secp256k1_context* ctx, unsigned char *sig64, const unsigned char *msg32, const secp256k1_keypair *keypair, secp256k1_nonce_function_hardened noncefp, void *ndata) {
     secp256k1_scalar sk;
     secp256k1_scalar e;
     secp256k1_scalar k;
@@ -638,7 +638,7 @@ int secp256k1_schnorrsig_compute_sigpoint(const secp256k1_context* ctx, secp256k
     return 1;
 }
 
-int secp256k1_schnorrsig_verify2(const secp256k1_context* ctx, const unsigned char *sig64, const unsigned char *msg32, const secp256k1_xonly_pubkey *pubkey) {
+int secp256k1_schnorrsig_xonly_verify(const secp256k1_context* ctx, const unsigned char *sig64, const unsigned char *msg32, const secp256k1_xonly_pubkey *pubkey) {
     secp256k1_scalar s;
     secp256k1_scalar e;
     secp256k1_gej rj;

@@ -226,7 +226,7 @@ SECP256K1_API extern const secp256k1_nonce_function_hardened secp256k1_nonce_fun
  *                secp256k1_nonce_function_bip340 is used, then ndata must be a
  *                pointer to 32-byte auxiliary randomness as per BIP-340.
  */
-SECP256K1_API int secp256k1_schnorrsig_sign2(
+SECP256K1_API int secp256k1_schnorrsig_xonly_sign(
     const secp256k1_context* ctx,
     unsigned char *sig64,
     const unsigned char *msg32,
@@ -261,7 +261,7 @@ SECP256K1_API int secp256k1_schnorrsig_compute_sigpoint(
  *         msg32: the 32-byte message being verified (cannot be NULL)
  *        pubkey: pointer to an x-only public key to verify with (cannot be NULL)
  */
-SECP256K1_API SECP256K1_WARN_UNUSED_RESULT int secp256k1_schnorrsig_verify2(
+SECP256K1_API SECP256K1_WARN_UNUSED_RESULT int secp256k1_schnorrsig_xonly_verify(
     const secp256k1_context* ctx,
     const unsigned char *sig64,
     const unsigned char *msg32,
