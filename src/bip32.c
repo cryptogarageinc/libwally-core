@@ -822,7 +822,7 @@ int bip32_key_get_priv_key(const struct ext_key *hdkey, unsigned char *bytes_out
 
 #define GET_I(name) \
     int bip32_key_get_ ## name(const struct ext_key *hdkey, size_t *written) { \
-        if (written) * written = 0; \
+        if (written) *written = 0; \
         if (!hdkey || !written) return WALLY_EINVAL; \
         *written = hdkey->name; \
         return WALLY_OK; \
