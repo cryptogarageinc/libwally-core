@@ -947,7 +947,7 @@ static bool check_descriptor_to_scriptpubkey(const char *function,
         return false;
     }
 
-    ret = wally_create_descriptor_checksum(
+    ret = wally_descriptor_create_checksum(
         descriptor,
         (const char **)g_miniscript_keyname_list,
         (const char **)g_miniscript_keyvalue_list,
@@ -955,7 +955,7 @@ static bool check_descriptor_to_scriptpubkey(const char *function,
         flag,
         &checksum);
     if (ret != WALLY_OK) {
-        printf("wally_create_descriptor_checksum NG[%d]\n", ret);
+        printf("wally_descriptor_create_checksum NG[%d]\n", ret);
         wally_free_string(hex);
         return false;
     }
