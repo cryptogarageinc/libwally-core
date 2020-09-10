@@ -77,6 +77,7 @@ size_t scriptint_to_bytes(int64_t signed_v, unsigned char *bytes_out);
 
 #define DESCRIPTOR_CHECKSUM_LENGTH  8
 
+/* output descriptor */
 #define DESCRIPTOR_KIND_DESCRIPTOR_PK      (0x00000100 | DESCRIPTOR_KIND_DESCRIPTOR)
 #define DESCRIPTOR_KIND_DESCRIPTOR_PKH     (0x00000200 | DESCRIPTOR_KIND_DESCRIPTOR)
 #define DESCRIPTOR_KIND_DESCRIPTOR_MULTI   (0x00000300 | DESCRIPTOR_KIND_DESCRIPTOR)
@@ -90,9 +91,12 @@ size_t scriptint_to_bytes(int64_t signed_v, unsigned char *bytes_out);
 #define DESCRIPTOR_KIND_DESCRIPTOR_RAW     (0x00050000 | DESCRIPTOR_KIND_DESCRIPTOR)
 #define DESCRIPTOR_KIND_DESCRIPTOR_MASK    (0xffffff00 | DESCRIPTOR_KIND_DESCRIPTOR)
 
-#define DESCRIPTOR_KIND_MINISCRIPT_MULTI     (0x00000300 | DESCRIPTOR_KIND_MINISCRIPT)
-#define DESCRIPTOR_KIND_MINISCRIPT_PK        (0x00001000 | DESCRIPTOR_KIND_MINISCRIPT)
-#define DESCRIPTOR_KIND_MINISCRIPT_PKH       (0x00002000 | DESCRIPTOR_KIND_MINISCRIPT)
+/* miniscript */
+#define DESCRIPTOR_KIND_MINISCRIPT_PK      (0x00000100 | DESCRIPTOR_KIND_MINISCRIPT)
+#define DESCRIPTOR_KIND_MINISCRIPT_PKH     (0x00000200 | DESCRIPTOR_KIND_MINISCRIPT)
+#define DESCRIPTOR_KIND_MINISCRIPT_MULTI   (0x00000300 | DESCRIPTOR_KIND_MINISCRIPT)
+#define DESCRIPTOR_KIND_MINISCRIPT_PK_K      (0x00001000 | DESCRIPTOR_KIND_MINISCRIPT)
+#define DESCRIPTOR_KIND_MINISCRIPT_PK_H      (0x00002000 | DESCRIPTOR_KIND_MINISCRIPT)
 #define DESCRIPTOR_KIND_MINISCRIPT_OLDER     (0x00010000 | DESCRIPTOR_KIND_MINISCRIPT)
 #define DESCRIPTOR_KIND_MINISCRIPT_AFTER     (0x00020000 | DESCRIPTOR_KIND_MINISCRIPT)
 #define DESCRIPTOR_KIND_MINISCRIPT_SHA256    (0x00030000 | DESCRIPTOR_KIND_MINISCRIPT)
@@ -390,13 +394,12 @@ static int verify_descriptor_wsh(struct miniscript_node_t *node, struct miniscri
 
 static int verify_descriptor_pk(struct miniscript_node_t *node, struct miniscript_node_t *parent)
 {
-    if (parent && (!parent->info || (parent->info->kind & DESCRIPTOR_KIND_MINISCRIPT)))
-        return WALLY_EINVAL;
+    (void)parent;
     if ((get_child_list_count(node) != node->info->inner_num) || node->child->info ||
-        ((node->child->kind & DESCRIPTOR_KIND_KEY) != DESCRIPTOR_KIND_KEY) ||
-        (parent && !parent->info))
+        ((node->child->kind & DESCRIPTOR_KIND_KEY) != DESCRIPTOR_KIND_KEY))
         return WALLY_EINVAL;
 
+    node->type_properties = node->info->type_properties;
     return WALLY_OK;
 }
 
@@ -2103,11 +2106,15 @@ static const struct miniscript_item_t miniscript_info_table[] = {
     {
         "wsh", DESCRIPTOR_KIND_DESCRIPTOR_WSH, 0, 1, verify_descriptor_wsh, generate_by_descriptor_wsh
     },
-    {
-        "pk", DESCRIPTOR_KIND_DESCRIPTOR_PK, 0, 1, verify_descriptor_pk, generate_by_descriptor_pk
+    {   /* c:pk_k */
+        "pk", DESCRIPTOR_KIND_DESCRIPTOR_PK | DESCRIPTOR_KIND_MINISCRIPT_PK,
+        MINISCRIPT_TYPE_B | MINISCRIPT_PROPERTY_O | MINISCRIPT_PROPERTY_N | MINISCRIPT_PROPERTY_D | MINISCRIPT_PROPERTY_U | MINISCRIPT_PROPERTY_E | MINISCRIPT_PROPERTY_M | MINISCRIPT_PROPERTY_S | MINISCRIPT_PROPERTY_X,
+        1, verify_descriptor_pk, generate_by_descriptor_pk
     },
-    {
-        "pkh", DESCRIPTOR_KIND_DESCRIPTOR_PKH, 0, 1, verify_descriptor_pkh, generate_by_descriptor_pkh
+    {   /* c:pk_h */
+        "pkh", DESCRIPTOR_KIND_DESCRIPTOR_PKH | DESCRIPTOR_KIND_MINISCRIPT_PKH,
+        MINISCRIPT_TYPE_B | MINISCRIPT_PROPERTY_N | MINISCRIPT_PROPERTY_D | MINISCRIPT_PROPERTY_U | MINISCRIPT_PROPERTY_E | MINISCRIPT_PROPERTY_M | MINISCRIPT_PROPERTY_S | MINISCRIPT_PROPERTY_X,
+        1, verify_descriptor_pkh, generate_by_descriptor_pkh
     },
     {
         "wpkh", DESCRIPTOR_KIND_DESCRIPTOR_WPKH, 0, 1, verify_descriptor_wpkh, generate_by_descriptor_wpkh
@@ -2131,12 +2138,12 @@ static const struct miniscript_item_t miniscript_info_table[] = {
     },
     /* miniscript */
     {
-        "pk_k", DESCRIPTOR_KIND_MINISCRIPT_PK,
+        "pk_k", DESCRIPTOR_KIND_MINISCRIPT_PK_K,
         MINISCRIPT_TYPE_K | MINISCRIPT_PROPERTY_O | MINISCRIPT_PROPERTY_N | MINISCRIPT_PROPERTY_D | MINISCRIPT_PROPERTY_U | MINISCRIPT_PROPERTY_E | MINISCRIPT_PROPERTY_M | MINISCRIPT_PROPERTY_S | MINISCRIPT_PROPERTY_X,
         1, verify_miniscript_pk, generate_by_miniscript_pk_k
     },
     {
-        "pk_h", DESCRIPTOR_KIND_MINISCRIPT_PKH,
+        "pk_h", DESCRIPTOR_KIND_MINISCRIPT_PK_H,
         MINISCRIPT_TYPE_K | MINISCRIPT_PROPERTY_N | MINISCRIPT_PROPERTY_D | MINISCRIPT_PROPERTY_U | MINISCRIPT_PROPERTY_E | MINISCRIPT_PROPERTY_M | MINISCRIPT_PROPERTY_S | MINISCRIPT_PROPERTY_X,
         1, verify_miniscript_pkh, generate_by_miniscript_pk_h
     },
