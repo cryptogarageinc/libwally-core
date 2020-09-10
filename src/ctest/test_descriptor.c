@@ -871,7 +871,7 @@ static bool check_parse_miniscript(const char *function, const char *descriptor,
     uint32_t index = 0;
     uint32_t flag = 0;
 
-    ret = wally_parse_miniscript(
+    ret = wally_descriptor_parse_miniscript(
         descriptor,
         key_name_list,
         key_value_list,
@@ -882,7 +882,7 @@ static bool check_parse_miniscript(const char *function, const char *descriptor,
         sizeof(script),
         &written);
     if (ret != WALLY_OK) {
-        printf("wally_parse_miniscript NG[%d]\n", ret);
+        printf("wally_descriptor_parse_miniscript NG[%d]\n", ret);
         return false;
     }
 
