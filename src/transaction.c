@@ -8,8 +8,9 @@
 #include <include/wally_script.h>
 
 #include <limits.h>
-#include "transaction_int.h"
+#include "pullpush.h"
 #include "script_int.h"
+#include "transaction_int.h"
 
 #define WALLY_TX_ALL_FLAGS \
     (WALLY_TX_FLAG_USE_WITNESS | WALLY_TX_FLAG_USE_ELEMENTS | \
@@ -196,6 +197,8 @@ int wally_tx_witness_stack_init_alloc(size_t allocation_len,
     OUTPUT_ALLOC(struct wally_tx_witness_stack);
 
     if (allocation_len) {
+        if (allocation_len > MAX_WITNESS_ITEMS_ALLOC)
+            allocation_len = MAX_WITNESS_ITEMS_ALLOC;
         (*output)->items = wally_calloc(allocation_len * sizeof(struct wally_tx_witness_item));
         if (!(*output)->items) {
             wally_free(*output);
@@ -227,6 +230,57 @@ static int tx_witness_stack_free(struct wally_tx_witness_stack *stack,
             wally_free(stack);
     }
     return WALLY_OK;
+}
+
+int wally_tx_witness_stack_get_num_items(
+    const struct wally_tx_witness_stack *stack, size_t *written)
+{
+    if (written)
+        *written = 0;
+    if (!stack || !written)
+        return WALLY_EINVAL;
+    *written = stack->num_items;
+    return WALLY_OK;
+}
+
+
+int wally_tx_witness_stack_from_bytes(const unsigned char *bytes, size_t bytes_len,
+                                      struct wally_tx_witness_stack **output)
+{
+    if (output)
+        *output = NULL;
+    if (!bytes || !bytes_len || !output)
+        return WALLY_EINVAL;
+    return pull_witness(&bytes, &bytes_len, output, false);
+}
+
+int wally_tx_witness_stack_get_length(
+    const struct wally_tx_witness_stack *stack,
+    size_t *written)
+{
+    if (written)
+        *written = 0;
+    if (!stack || !written)
+        return WALLY_EINVAL;
+    push_witness_stack(NULL, written, stack);
+    return WALLY_OK;
+}
+
+int wally_tx_witness_stack_to_bytes(
+    const struct wally_tx_witness_stack *stack,
+    unsigned char *bytes_out,
+    size_t len,
+    size_t *written)
+{
+    int ret;
+    if (written)
+        *written = 0;
+    if (!stack || !bytes_out || !written)
+        return WALLY_EINVAL;
+    ret = wally_tx_witness_stack_get_length(stack, written);
+    if (ret == WALLY_OK && len >= *written)
+        push_witness_stack(&bytes_out, &len, stack);
+    return ret;
 }
 
 int wally_tx_witness_stack_free(struct wally_tx_witness_stack *stack)
@@ -1090,10 +1144,16 @@ int wally_tx_init_alloc(uint32_t version, uint32_t locktime,
     OUTPUT_CHECK;
     OUTPUT_ALLOC(struct wally_tx);
 
-    if (inputs_allocation_len)
+    if (inputs_allocation_len) {
+        if (inputs_allocation_len > TX_MAX_INPUTS_ALLOC)
+            inputs_allocation_len = TX_MAX_INPUTS_ALLOC;
         new_inputs = wally_calloc(inputs_allocation_len * sizeof(struct wally_tx_input));
-    if (outputs_allocation_len)
+    }
+    if (outputs_allocation_len) {
+        if (outputs_allocation_len > TX_MAX_OUTPUTS_ALLOC)
+            outputs_allocation_len = TX_MAX_OUTPUTS_ALLOC;
         new_outputs = wally_calloc(outputs_allocation_len * sizeof(struct wally_tx_output));
+    }
     if ((inputs_allocation_len && !new_inputs) ||
         (outputs_allocation_len && !new_outputs)) {
         wally_free(new_inputs);
@@ -3797,13 +3857,21 @@ int wally_tx_clone_alloc(const struct wally_tx *tx, uint32_t flags, struct wally
 
     OUTPUT_CHECK;
 
-    if (!is_valid_tx(tx) || flags != 0)
+    if (!is_valid_tx(tx) || flags & ~WALLY_TX_CLONE_FLAG_NON_FINAL)
         return WALLY_EINVAL;
 
     ret = wally_tx_init_alloc(tx->version, tx->locktime, tx->num_inputs, tx->num_outputs, output);
 
-    for (i = 0; ret == WALLY_OK && i < tx->num_inputs; ++i)
-        ret = wally_tx_add_input(*output, &tx->inputs[i]);
+    for (i = 0; ret == WALLY_OK && i < tx->num_inputs; ++i) {
+        struct wally_tx_input tmp;
+        memcpy(&tmp, &tx->inputs[i], sizeof(tmp));
+        if (flags & WALLY_TX_CLONE_FLAG_NON_FINAL) {
+            tmp.script = NULL;
+            tmp.script_len = 0;
+            tmp.witness = NULL;
+        }
+        ret = wally_tx_add_input(*output, &tmp);
+    }
 
     for (i = 0; ret == WALLY_OK && i < tx->num_outputs; ++i)
         ret = wally_tx_add_output(*output, &tx->outputs[i]);
