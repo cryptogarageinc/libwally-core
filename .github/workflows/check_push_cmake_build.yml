@@ -43,7 +43,7 @@ jobs:
       with:
         submodules: true
     - name: setup python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
         architecture: x64
@@ -86,7 +86,7 @@ jobs:
         submodules: true
     - name: setup python
       if: matrix.target == 'python'
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
         architecture: x64
