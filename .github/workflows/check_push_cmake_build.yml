@@ -73,7 +73,7 @@ jobs:
 #        os: [macos-12, windows-2022, ubuntu-22.04]
         os: [ubuntu-22.04]
         target: [python, java]
-        java: ['8.0', '11.0', '17']
+        java: ['8.0', '11.0', '17', '20']
         exclude:
           - target: python
             java: '8.0'
